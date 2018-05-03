@@ -60,6 +60,11 @@ namespace TwitterKit.Internal
 		{
 			Debug.Log ("Would call Twitter Compose on a physical device for user " + session.userName);
 		}
+
+		public void ComposeWithVideo (TwitterSession session, string videoUri, string text, string[] hashtags)
+		{
+			Debug.Log ("Would call Twitter Compose on a physical device for user " + session.userName);
+		}
 	}
 }
 #endif

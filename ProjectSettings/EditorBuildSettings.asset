@@ -6,5 +6,5 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Twitter/Demo/Scene/TwitterDemo.unity
-    guid: 93d1862d04d464cc095a7e0d4027666d
+    path: Assets/Twitter/Demo/Scene/TwitterDemoVideo.unity
+    guid: 3fd0294e69c434e9ea9da1cd3614344e

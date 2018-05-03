@@ -41,6 +41,9 @@ private static extern void TwitterInit (string consumerKey, string consumerSecre
 		private static extern void TwitterCompose (string userID, string imageUri, String text, string[] hashtags, int hashtagCount);
 
 		[DllImport("__Internal")]
+		private static extern void TwitterComposeWithVideo (string userID, string videoUri, String text, string[] hashtags, int hashtagCount);
+
+		[DllImport("__Internal")]
 		private static extern void TwitterRequestEmail (string userID);
 
 		public void Init (string consumerKey, string consumerSecret)
@@ -75,6 +78,13 @@ private static extern void TwitterInit (string consumerKey, string consumerSecre
 			int hashtagsLength = hashtags == null ? 0 : hashtags.Length;
 			string imagePath = imageUri != null ? imageUri.Replace("file://", "") : null;
 			IOSTwitterImpl.TwitterCompose (Convert.ToString(session.id), imagePath, text, hashtags, hashtagsLength);
+		}
+
+		public void ComposeWithVideo (TwitterSession session, string videoUri, string text, string[] hashtags)
+		{
+			int hashtagsLength = hashtags == null ? 0 : hashtags.Length;
+			string videoPath = videoUri != null ? videoUri.Replace("file://", "") : null;
+			IOSTwitterImpl.TwitterComposeWithVideo (Convert.ToString(session.id), videoPath, text, hashtags, hashtagsLength);
 		}
 	}
 }

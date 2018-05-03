@@ -57,6 +57,11 @@ namespace TwitterKit.Internal
 			string sessionStr = TwitterSession.Serialize (session);
 			twitter.CallStatic ("compose", sessionStr, imageUri, text, hashtags);
 		}
+
+		public void ComposeWithVideo (TwitterSession session, string videoUri, string text, string[] hashtags)
+		{
+			throw new System.NotImplementedException();
+		}
 	}
 }
 #endif

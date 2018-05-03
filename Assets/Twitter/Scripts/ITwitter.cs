@@ -32,5 +32,7 @@ namespace TwitterKit.Internal
 		void RequestEmail (TwitterSession session);
 
 		void Compose (TwitterSession session, string imageUri, string text, string[] hashtags);
+
+		void ComposeWithVideo(TwitterSession session, string videoUri, string text, string[] hashtags);
 	}
 }

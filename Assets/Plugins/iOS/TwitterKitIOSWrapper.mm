@@ -77,6 +77,25 @@ static NSDictionary * NSDictionaryFromError(NSError *error)
     return @{ @"code": @(error.code), @"message": error.localizedDescription };
 }
 
+// https://stackoverflow.com/questions/32691304/ios-how-to-get-thumbnail-from-video-without-play
+static UIImage * createThumbnailFromVideo(NSURL* videoUrl) {
+    AVAsset *asset = [AVAsset assetWithURL:videoUrl];
+    AVAssetImageGenerator *generator = [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+    generator.appliesPreferredTrackTransform = YES;
+    CMTime time = CMTimeMakeWithSeconds((Float64)1, 100);
+    
+    CGImageRef cgImage = [generator copyCGImageAtTime:time actualTime:nil error:nil];
+    UIImage *image;
+    if(cgImage) {
+        image = [UIImage imageWithCGImage:cgImage];
+    } else {
+        // Error icon
+        image = [UIImage imageNamed:@"ico_placeholder"];
+    }
+    CGImageRelease(cgImage);
+    return image;
+}
+
 static TwitterUnityWrapper *_instance = [TwitterUnityWrapper sharedInstance];
 
 @implementation TwitterUnityWrapper
@@ -219,6 +238,39 @@ void TwitterCompose(const char *userID, const char *imageURI, const char *text, 
     }
 
     TWTRComposerViewController *composerVC = [[TWTRComposerViewController alloc] initWithInitialText:[NSString stringWithFormat:@"%@%@", NSStringFromCString(text), hashtagsString] image:image videoURL:nil];
+    composerVC.delegate = TwitterUnityWrapper.sharedInstance;
+    
+    [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:composerVC animated:YES completion:nil];
+}
+
+
+void TwitterComposeWithVideo(const char *userID, const char *videoURI, const char *text, const char *hashtags[], int hashtagCount) {
+    
+    if (!userID) {
+        NSLog(@"Missing required parameter userID to compose a Tweet");
+        return;
+    }
+    
+    // Prepare video data
+    NSURL *url = [NSURL fileURLWithPath:NSStringFromCString(videoURI)];
+    NSData *videoData = [NSData dataWithContentsOfURL:url];
+    if(!videoData) {
+        NSLog(@"Video dit not found");
+        return;
+    }
+    // Make thumbnail
+    UIImage *thumbnail = createThumbnailFromVideo(url);
+    
+    // Prepare hash tags
+    NSString *hashtagsString = [[NSMutableString alloc] init];
+    for (NSInteger idx = 0; idx < hashtagCount; idx++) {
+        hashtagsString = [hashtagsString stringByAppendingString:[NSString stringWithFormat:@" %@",NSStringFromCString(hashtags[idx])]];
+    }
+    
+    NSString* msg = [NSString stringWithFormat:@"%@%@", NSStringFromCString(text), hashtagsString];
+    TWTRComposerViewController *composerVC = [[TWTRComposerViewController alloc] initWithInitialText:msg
+                                                                                               image:thumbnail
+                                                                                           videoData:videoData];
     composerVC.delegate = TwitterUnityWrapper.sharedInstance;
     
     [[[[UIApplication sharedApplication] keyWindow] rootViewController] presentViewController:composerVC animated:YES completion:nil];
